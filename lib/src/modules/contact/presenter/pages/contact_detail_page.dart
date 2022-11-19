@@ -59,21 +59,21 @@ class ContactDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _getLSection(
-            type: TypeSection.TEXT,
+            type: TypeSection.text,
             label: 'CPF',
             value: AppMaskFormatters.cpf.maskText(user.documentNumber)),
         _getLSection(
-            type: TypeSection.TEXT, label: 'E-mail', value: user.email ?? ''),
+            type: TypeSection.text, label: 'E-mail', value: user.email ?? ''),
         _getLSection(
-            type: TypeSection.NUMBER,
+            type: TypeSection.number,
             label: 'Celular',
             value: user.celPhoneNumber ?? ''),
         _getLSection(
-            type: TypeSection.NUMBER,
+            type: TypeSection.number,
             label: 'Casa',
             value: user.homePhoneNumber ?? ''),
         _getLSection(
-            type: TypeSection.NUMBER,
+            type: TypeSection.number,
             label: 'Trabalho',
             value: user.workPhoneNumber ?? ''),
       ],
@@ -98,9 +98,9 @@ class ContactDetailPage extends StatelessWidget {
         const SizedBox(height: 2),
         InkWell(
           onTap: () =>
-              type == TypeSection.NUMBER ? _makePhoneCall(value) : null,
+              type == TypeSection.number ? _makePhoneCall(value) : null,
           child: Text(
-              type == TypeSection.NUMBER
+              type == TypeSection.number
                   ? AppMaskFormatters.phone.maskText(value)
                   : value,
               style:
@@ -114,20 +114,18 @@ class ContactDetailPage extends StatelessWidget {
   Future<void> _deleteContactConfirmation(final BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Excluir este contato?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: const Text('Excluir'),
-              onPressed: () {},
+              onPressed: () => _deleteContact,
             ),
           ],
         );
@@ -135,13 +133,14 @@ class ContactDetailPage extends StatelessWidget {
     );
   }
 
+  void _deleteContact() {
+    //todo
+  }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: '+$phoneNumber',
-    );
+    final Uri launchUri = Uri(scheme: 'tel', path: '+$phoneNumber');
     await launchUrl(launchUri);
   }
 }
 
-enum TypeSection { TEXT, NUMBER }
+enum TypeSection { text, number }

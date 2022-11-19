@@ -20,13 +20,11 @@ class ContactModule extends Module {
         //usecase
 
         //store
-
-
       ];
 
   @override
   List<ModularRoute> get routes => [
-        ChildRoute('/', child: (context, args) => ContactListPage()),
+        ChildRoute('/', child: (context, args) => const ContactListPage()),
         ChildRoute('/detail',
             child: (context, args) => ContactDetailPage(user: args.data)),
         ChildRoute('/form',

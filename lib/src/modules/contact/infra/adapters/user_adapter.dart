@@ -3,16 +3,16 @@
 import '../../domain/entities/user.dart';
 
 class UserAdapter {
-  static final String tableName = 'user';
-  static final String columnId = '_id';
-  static final String columnFirstName = 'firstName';
-  static final String columnLastName = 'lastName';
-  static final String columnDocumentNumber = 'documentNumber';
-  static final String columnEmail = 'email';
-  static final String columnPhoto = 'photo';
-  static final String columnCelPhoneNumber = 'celPhoneNumber';
-  static final String columnWorkPhoneNumber = 'workPhoneNumber';
-  static final String columnHomePhoneNumber = 'homePhoneNumber';
+  static const String tableName = 'user';
+  static const String columnId = '_id';
+  static const String columnFirstName = 'firstName';
+  static const String columnLastName = 'lastName';
+  static const String columnDocumentNumber = 'documentNumber';
+  static const String columnEmail = 'email';
+  static const String columnPhoto = 'photo';
+  static const String columnCelPhoneNumber = 'celPhoneNumber';
+  static const String columnWorkPhoneNumber = 'workPhoneNumber';
+  static const String columnHomePhoneNumber = 'homePhoneNumber';
 
   Map<String, dynamic> toJson(User user) => {
         columnId: user.id,
@@ -44,7 +44,7 @@ class UserAdapter {
 
   static String createTableQuery() {
     return "CREATE TABLE $tableName (" +
-        "$tableName INTEGER PRIMARY KEY " +
+        "$columnId INTEGER PRIMARY KEY " +
         "$columnFirstName TEXT" +
         "$columnLastName TEXT" +
         "$columnDocumentNumber TEXT" +

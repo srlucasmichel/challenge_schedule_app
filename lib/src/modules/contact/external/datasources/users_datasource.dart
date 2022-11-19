@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:uno/uno.dart';
 
 import '../../domain/errors/errors.dart';
@@ -11,11 +12,16 @@ class UsersDatasource implements IUserDatasource {
   @override
   Future<List> getUsers() async {
     try {
+      Either<DatasourceContactException, String> cpf;
       final response =
           await uno.get('https://jsonplaceholder.typicode.com/users');
       print("#####|[getUsers]status:${response.status}|#####");
       print("#####|[getUsers]data:${response.data}|#####");
-      await _getCPF();
+
+      cpf = await _getCPF();
+      if (cpf.isLeft()) {
+        throw DatasourceContactException(cpf.getLeft().toString());
+      }
 
       return response.data;
     } catch (e, s) {
@@ -23,7 +29,7 @@ class UsersDatasource implements IUserDatasource {
     }
   }
 
-  Future<String> _getCPF() async {
+  Future<Either<DatasourceContactException, String>> _getCPF() async {
     try {
       Uno unoPost =
           Uno(headers: {'Content-Type': 'application/x-www-form-urlencoded'});
@@ -32,9 +38,9 @@ class UsersDatasource implements IUserDatasource {
           data: {'acao': 'gerar_cpf'});
       print("#####|[_getCPF]status:${response.status}|#####");
       print("#####|[_getCPF]data:${response.data}|#####");
-      return response.data;
+      return right(response.data);
     } catch (e, s) {
-      throw DatasourceContactException(e.toString(), s);
+      return left(DatasourceContactException(e.toString(), s));
     }
   }
 }
