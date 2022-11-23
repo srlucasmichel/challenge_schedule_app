@@ -1,5 +1,3 @@
-
-
 import '../../domain/entities/user.dart';
 
 class UserAdapter {
@@ -40,6 +38,19 @@ class UserAdapter {
         celPhoneNumber: json[columnCelPhoneNumber],
         workPhoneNumber: json[columnWorkPhoneNumber],
         homePhoneNumber: json[columnHomePhoneNumber]);
+  }
+
+  static User fromExternalJson(Map<String, dynamic> json, String cpf) {
+    return User(
+        id: json["id"] as int,
+        documentNumber: cpf,
+        firstName: json["username"] as String,
+        lastName: json["name"] as String,
+        email: json["email"] as String,
+        photo: json["url"],
+        celPhoneNumber: json["phone2"],
+        workPhoneNumber: json["phone3"],
+        homePhoneNumber: json["phone"] as String);
   }
 
   static String createTableQuery() {

@@ -7,14 +7,12 @@ import '../../../../../domain/entities/user.dart';
 import '../../../../../domain/errors/errors.dart';
 import '../../../../../domain/repositories/user_repository.dart';
 import '../../../../adapters/user_adapter.dart';
-import '../../../../datasources/user_datasource.dart';
 import '../dbconfig.dart';
 
 class UserRepository extends IUserRepository {
   late Database _db;
-  final IUserDatasource userDatasource;
 
-  UserRepository(this.userDatasource) {
+  UserRepository() {
     _getDbInstance();
   }
 

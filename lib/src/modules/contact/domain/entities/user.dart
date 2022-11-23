@@ -19,4 +19,9 @@ class User {
       this.celPhoneNumber,
       this.workPhoneNumber,
       this.homePhoneNumber});
+
+  @override
+  String toString() {
+    return 'User{id: $id, firstName: $firstName, lastName: $lastName, documentNumber: $documentNumber, email: $email, photo: $photo, celPhoneNumber: $celPhoneNumber, workPhoneNumber: $workPhoneNumber, homePhoneNumber: $homePhoneNumber}';
+  }
 }

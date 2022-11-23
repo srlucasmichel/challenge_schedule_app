@@ -1,33 +1,33 @@
-import 'package:challenge_schedule_app/src/modules/contact/presenter/stores/contact_store.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:uno/uno.dart';
 
-import 'domain/repositories/user_repository.dart';
-import 'domain/usecases/change_user.dart';
-import 'domain/usecases/create_user.dart';
-import 'domain/usecases/delete_user.dart';
-import 'domain/usecases/get_users.dart';
-import 'external/datasources/users_datasource.dart';
-import 'infra/data/sources/local/daos/user_dao.dart';
-import 'infra/datasources/user_datasource.dart';
+import 'domain/repositories/populate_users_repository.dart';
+import 'domain/usecases/get_users_api.dart';
+import 'external/datasources/cpf_datasource.dart';
+import 'external/datasources/populate_users_datasource.dart';
+import 'infra/datasources/cpf_datasource.dart';
+import 'infra/datasources/populate_users_datasource.dart';
+import 'infra/repositories/populate_users_repository.dart';
 import 'presenter/pages/contact_detail_page.dart';
 import 'presenter/pages/contact_form_page.dart';
 import 'presenter/pages/contact_list_page.dart';
+import 'presenter/stores/contact_store.dart';
+import 'presenter/utils/http_service.dart';
 
 class ContactModule extends Module {
   @override
   List<Bind> get binds => [
         //utils
-        Bind.factory((i) => Uno()),
+        Bind.factory((i) => DioClient(Dio())),
         //datasource
-        Bind.factory<IUserDatasource>((i) => UsersDatasource(i())),
+        Bind.factory<IPopulateUsersDatasource>(
+            (i) => PopulateUsersDatasource(i())),
+        Bind.factory<ICpfDatasource>((i) => CpfDatasource(i())),
         //repository
-        Bind.factory<IUserRepository>((i) => UserRepository(i())),
+        Bind.factory<IPopulateUsersRepository>(
+            (i) => PopulateUsersRepository(i(), i())),
         //usecase
-        Bind.factory((i) => ChangeUser(i())),
-        Bind.factory((i) => CreateUser(i())),
-        Bind.factory((i) => DeleteUser(i())),
-        Bind.factory((i) => GetUsers(i())),
+        Bind.factory((i) => GetUsersApi(i())),
         //store
         Bind.singleton((i) => ContactStore(i())),
       ];

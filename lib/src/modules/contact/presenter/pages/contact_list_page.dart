@@ -18,8 +18,8 @@ class _ContactListPageState extends State<ContactListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ContactStore>().fetchPosts();
-    users.add(User(
+    context.read<ContactStore>().fetchUsers();
+    /*users.add(User(
         id: 1,
         documentNumber: '47964001841',
         firstName: 'Lucas',
@@ -48,13 +48,14 @@ class _ContactListPageState extends State<ContactListPage> {
         photo: "https://www.w3schools.com/howto/img_avatar.png",
         celPhoneNumber: '5511976688302',
         homePhoneNumber: '551130334044',
-        workPhoneNumber: '551131771212'));
+        workPhoneNumber: '551131771212'));*/
   }
 
   @override
   Widget build(BuildContext context) {
     final store = context.watch<ContactStore>();
     final state = store.value;
+    //final state = SuccessContactState;
 
     Widget child = Container();
 
