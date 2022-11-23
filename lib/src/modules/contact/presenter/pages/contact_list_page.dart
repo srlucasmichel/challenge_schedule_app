@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../../domain/entities/user.dart';
 import '../states/contact_state.dart';
 import '../stores/contact_store.dart';
 
@@ -13,7 +12,7 @@ class ContactListPage extends StatefulWidget {
 }
 
 class _ContactListPageState extends State<ContactListPage> {
-  List<User> users = List.empty(growable: true);
+  //List<User> users = List.empty(growable: true);
 
   @override
   void initState() {
@@ -55,7 +54,6 @@ class _ContactListPageState extends State<ContactListPage> {
   Widget build(BuildContext context) {
     final store = context.watch<ContactStore>();
     final state = store.value;
-    //final state = SuccessContactState;
 
     Widget child = Container();
 
@@ -71,7 +69,7 @@ class _ContactListPageState extends State<ContactListPage> {
 
     if (state is SuccessContactState) {
       child = ListView.builder(
-          itemCount: users.length,
+          itemCount: state.users.length,
           itemBuilder: (context, index) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -79,7 +77,7 @@ class _ContactListPageState extends State<ContactListPage> {
                 children: [
                   InkWell(
                     onTap: () => Modular.to
-                        .pushNamed('/detail', arguments: users[index]),
+                        .pushNamed('/detail', arguments: state.users[index]),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -87,11 +85,11 @@ class _ContactListPageState extends State<ContactListPage> {
                         CircleAvatar(
                           radius: 24.0,
                           backgroundImage:
-                              NetworkImage(users[index].photo ?? ''),
+                              NetworkImage(state.users[index].photo ?? ''),
                           backgroundColor: Colors.transparent,
                         ),
                         const SizedBox(width: 16),
-                        Text(users[index].firstName ?? '-',
+                        Text(state.users[index].firstName ?? '-',
                             style: const TextStyle(
                                 fontSize: 17, fontWeight: FontWeight.w600))
                       ],

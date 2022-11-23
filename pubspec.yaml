@@ -38,6 +38,7 @@ dependencies:
   url_launcher: ^6.1.6
   image_picker: ^0.8.6
   cpf_cnpj_validator: ^2.0.0
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

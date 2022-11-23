@@ -208,11 +208,11 @@ class _ContactFormPageState extends State<ContactFormPage> {
           AppMaskFormatters.cpf.maskText(widget.user?.documentNumber ?? '');
       _emailController.text = widget.user?.email ?? '';
       _celController.text =
-          AppMaskFormatters.cpf.maskText(widget.user?.celPhoneNumber ?? '');
+          AppMaskFormatters.phone.maskText(widget.user?.celPhoneNumber ?? '');
       _workController.text =
-          AppMaskFormatters.cpf.maskText(widget.user?.workPhoneNumber ?? '');
+          AppMaskFormatters.phone.maskText(widget.user?.workPhoneNumber ?? '');
       _homeController.text =
-          AppMaskFormatters.cpf.maskText(widget.user?.homePhoneNumber ?? '');
+          AppMaskFormatters.phone.maskText(widget.user?.homePhoneNumber ?? '');
     }
   }
 }

@@ -3,9 +3,9 @@ import '../../domain/entities/user.dart';
 abstract class ContactState {}
 
 class SuccessContactState implements ContactState {
-  final List<User> posts;
+  final List<User> users;
 
-  SuccessContactState(this.posts);
+  SuccessContactState(this.users);
 }
 
 class EmptyContactState extends SuccessContactState {

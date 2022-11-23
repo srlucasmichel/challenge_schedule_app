@@ -1,13 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../../../domain/entities/user.dart';
-import '../../../../../domain/errors/errors.dart';
-import '../../../../../domain/repositories/user_repository.dart';
-import '../../../../adapters/user_adapter.dart';
-import '../dbconfig.dart';
+import '../../domain/entities/user.dart';
+import '../../domain/errors/errors.dart';
+import '../../domain/repositories/user_repository.dart';
+import '../adapters/user_adapter.dart';
+import '../datasources/local/dbconfig.dart';
 
 class UserRepository extends IUserRepository {
   late Database _db;
@@ -16,10 +17,10 @@ class UserRepository extends IUserRepository {
     _getDbInstance();
   }
 
-  void _getDbInstance() async => _db = await DbConfig.getInstance();
+  Future<void> _getDbInstance() async => _db = await DbConfig.getInstance();
 
   @override
-  Future<Either<IUserException, int>> createUser(User user) async {
+  Future<Either<IUserException, int>> insertUser(User user) async {
     try {
       return right(
           await _db.insert(UserAdapter.tableName, UserAdapter().toJson(user)));
@@ -29,8 +30,32 @@ class UserRepository extends IUserRepository {
   }
 
   @override
+  Future<Either<IUserException, void>> insertUsers(List<User> users) async {
+    try {
+      log("#####|[dao]init ->insertUsers|#####");
+      await _getDbInstance();
+
+      await _db.transaction((txn) async {
+        var batch = txn.batch();
+
+        for (User user in users) {
+          batch.insert(UserAdapter.tableName, UserAdapter().toJson(user));
+        }
+
+        await batch.commit(noResult: true);
+      });
+      log("#####|[dao]returning ->insertUsers|#####");
+      return right(0);
+    } on IUserException catch (e) {
+      return left(e);
+    }
+  }
+
+  @override
   Future<Either<IUserException, List<User>>> getUsers() async {
     try {
+      log("#####|[dao]init ->getUsers|#####");
+      await _getDbInstance();
       List<User> list = [];
 
       List<Map> maps = await _db.query(UserAdapter.tableName, columns: [
@@ -44,6 +69,8 @@ class UserRepository extends IUserRepository {
         UserAdapter.columnWorkPhoneNumber,
         UserAdapter.columnHomePhoneNumber
       ]);
+
+      log("#####|[dao] getUsers:$maps|#####");
 
       if (maps.isNotEmpty) list = UserAdapter.fromJsonList(maps);
 
@@ -64,7 +91,7 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Either<IUserException, int>> changeUser(User user) async {
+  Future<Either<IUserException, int>> updateUser(User user) async {
     try {
       return right(await _db.update(
           UserAdapter.tableName, UserAdapter().toJson(user),

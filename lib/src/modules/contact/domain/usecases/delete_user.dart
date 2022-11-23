@@ -4,7 +4,7 @@ import '../errors/errors.dart';
 import '../repositories/user_repository.dart';
 
 abstract class IDeleteUser {
-  Future<Either<IUserException, int>> call({required int userId});
+  Future<Either<IUserException, void>> call({required int userId});
 }
 
 class DeleteUser implements IDeleteUser {
@@ -13,7 +13,7 @@ class DeleteUser implements IDeleteUser {
   DeleteUser(this.repository);
 
   @override
-  Future<Either<IUserException, int>> call({required int userId}) async {
+  Future<Either<IUserException, void>> call({required int userId}) async {
     return await repository.deleteUser(userId: userId);
   }
 }

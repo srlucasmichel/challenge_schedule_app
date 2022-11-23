@@ -1,8 +1,8 @@
 import '../../domain/entities/user.dart';
 
 class UserAdapter {
-  static const String tableName = 'user';
-  static const String columnId = '_id';
+  static const String tableName = 'tb_user';
+  static const String columnId = 'id';
   static const String columnFirstName = 'firstName';
   static const String columnLastName = 'lastName';
   static const String columnDocumentNumber = 'documentNumber';
@@ -55,15 +55,15 @@ class UserAdapter {
 
   static String createTableQuery() {
     return "CREATE TABLE $tableName (" +
-        "$columnId INTEGER PRIMARY KEY " +
-        "$columnFirstName TEXT" +
-        "$columnLastName TEXT" +
-        "$columnDocumentNumber TEXT" +
-        "$columnEmail TEXT" +
-        "$columnPhoto TEXT" +
-        "$columnCelPhoneNumber TEXT" +
-        "$columnWorkPhoneNumber TEXT" +
-        "$columnHomePhoneNumber TEXT" +
+        "$columnId INTEGER PRIMARY KEY," +
+        " $columnFirstName TEXT," +
+        " $columnLastName TEXT," +
+        " $columnDocumentNumber TEXT," +
+        " $columnEmail TEXT," +
+        " $columnPhoto TEXT," +
+        " $columnCelPhoneNumber TEXT," +
+        " $columnWorkPhoneNumber TEXT," +
+        " $columnHomePhoneNumber TEXT" +
         ")";
   }
 }
