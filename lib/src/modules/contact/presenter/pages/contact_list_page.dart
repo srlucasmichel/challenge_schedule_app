@@ -26,10 +26,31 @@ class _ContactListPageState extends State<ContactListPage> {
 
     Widget child = Container();
 
+    if (state is EmptyContactState) {
+      child = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset('images/undraw_empty_re_opql.png', width: 200),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text('Nenhum contato por aqui ;)',
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54)),
+            ],
+          )
+        ],
+      );
+    }
+
     if (state is LoadingContactState) {
       child = Center(
-        child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
-      );
+          child:
+              CircularProgressIndicator(color: Theme.of(context).primaryColor));
     }
 
     if (state is ErrorContactState) {
