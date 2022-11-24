@@ -84,7 +84,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
       alignment: AlignmentDirectional.topCenter,
       children: <Widget>[
         Container(
-          margin: const EdgeInsets.only(top: 27.0),
+          margin: const EdgeInsets.only(top: 30.0),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(12)),
@@ -117,21 +117,22 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
                   type: TypeSection.number,
                   label: 'Celular',
                   value: _user.celPhoneNumber ?? '',
-                  icon: Icons.contact_phone_rounded),
+                  icon: Icons.phone_rounded),
               _getLSection(
                   type: TypeSection.number,
                   label: 'Casa',
                   value: _user.homePhoneNumber ?? '',
-                  icon: Icons.contact_phone_rounded),
+                  icon: Icons.phone_rounded),
               _getLSection(
                   type: TypeSection.number,
                   label: 'Trabalho',
                   value: _user.workPhoneNumber ?? '',
-                  icon: Icons.contact_phone_rounded),
+                  icon: Icons.phone_rounded),
             ],
           ),
         ),
-        ImageAvatar(_user.photo, size: 72, firstName: _user.firstName),
+        ImageAvatar(
+            sizes: {72.0: 28.0}, path: _user.photo, firstName: _user.firstName),
       ],
     );
   }
@@ -158,40 +159,27 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
           children: [
             Icon(icon, size: 19.0, color: Colors.black54),
             const SizedBox(width: 6),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (type == TypeSection.number)
-                  InkWell(
-                    onTap: () => _makePhoneCall(value),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 1.0),
-                      child: Text(AppMaskFormatters.phone.maskText(value),
-                          style: const TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.w400)),
+            if (type == TypeSection.number)
+              Tooltip(
+                message: 'Clique para realizar uma chamada',
+                child: InkWell(
+                  onTap: () => _makePhoneCall(value),
+                  child: Container(
+                    padding: const EdgeInsets.only(bottom: 1.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                  )
-                else
-                  Text(value,
-                      style: const TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w400)),
-                const SizedBox(width: 8),
-                if (type == TypeSection.number)
-                  InkWell(
-                    onTap: () => _makePhoneCall(value),
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(12, 8, 0, 0),
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                          color: Colors.green.shade600,
-                          borderRadius: BorderRadius.circular(50)),
-                      child: const Icon(Icons.phone_rounded,
-                          color: Colors.white, size: 15.0),
-                    ),
-                  )
-              ],
-            ),
+                    child: Text(AppMaskFormatters.phone.maskText(value),
+                        style: const TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w400)),
+                  ),
+                ),
+              )
+            else
+              Text(value,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w400)),
           ],
         ),
         const SizedBox(height: 12),
@@ -223,7 +211,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
 
   void _deleteContact(BuildContext context) async {
     final store = context.watch<ContactDetailStore>();
-    await store.delete(_user.id);
+    await store.delete(_user.id ?? 0);
     final state = store.value;
 
     if (state is SuccessContactDeleteState) {

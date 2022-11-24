@@ -3,28 +3,28 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImageAvatar extends StatelessWidget {
+  final Map<double, double> sizes;
   final String? path;
-  final double? size;
   final String? firstName;
 
-  const ImageAvatar(this.path, {Key? key, this.size, this.firstName})
+  const ImageAvatar({Key? key, required this.sizes, this.path, this.firstName})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (path == null || path!.trim().isEmpty) {
       return Container(
-        width: size ?? 39.0,
-        height: size ?? 39.0,
+        width: sizes.keys.first,
+        height: sizes.keys.first,
         decoration: BoxDecoration(
             color: const Color.fromRGBO(193, 200, 234, 1),
             borderRadius: BorderRadius.circular(50)),
         child: Center(
             child: Text(_firstLetterName,
-                style: const TextStyle(
+                style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.black54,
-                    fontSize: 16.0))),
+                    fontSize: sizes.values.first))),
       );
     }
     return CircleAvatar(

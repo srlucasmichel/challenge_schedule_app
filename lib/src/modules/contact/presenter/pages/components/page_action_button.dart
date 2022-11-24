@@ -21,8 +21,10 @@ class PageActionButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: Theme.of(context).primaryColor),
-            const SizedBox(height: 3),
-            Text(label, style: TextStyle(color: Theme.of(context).primaryColor))
+            const SizedBox(height: 2),
+            Text(label,
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor, fontSize: 13.0))
           ],
         ),
       ),

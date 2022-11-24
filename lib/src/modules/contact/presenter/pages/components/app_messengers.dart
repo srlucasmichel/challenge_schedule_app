@@ -9,6 +9,8 @@ class AppMessengers {
   void showSnackBar({required SnackBarType type}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(bottom: 16.0, left: 8.0, right: 8.0),
         backgroundColor: type == SnackBarType.success
             ? Colors.green.shade800
             : Colors.red.shade800,

@@ -54,17 +54,19 @@ class UserRepository extends IUserRepository {
       await _getDbInstance();
       List<User> list = [];
 
-      List<Map> maps = await _db.query(UserAdapter.tableName, columns: [
-        UserAdapter.columnId,
-        UserAdapter.columnFirstName,
-        UserAdapter.columnLastName,
-        UserAdapter.columnDocumentNumber,
-        UserAdapter.columnEmail,
-        UserAdapter.columnPhoto,
-        UserAdapter.columnCelPhoneNumber,
-        UserAdapter.columnWorkPhoneNumber,
-        UserAdapter.columnHomePhoneNumber
-      ]);
+      List<Map> maps = await _db.query(UserAdapter.tableName,
+          columns: [
+            UserAdapter.columnId,
+            UserAdapter.columnFirstName,
+            UserAdapter.columnLastName,
+            UserAdapter.columnDocumentNumber,
+            UserAdapter.columnEmail,
+            UserAdapter.columnPhoto,
+            UserAdapter.columnCelPhoneNumber,
+            UserAdapter.columnWorkPhoneNumber,
+            UserAdapter.columnHomePhoneNumber
+          ],
+          orderBy: '${UserAdapter.columnFirstName} COLLATE NOCASE' );
 
       if (maps.isNotEmpty) list = UserAdapter.fromJsonList(maps);
 

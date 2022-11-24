@@ -62,7 +62,9 @@ class _ContactListPageState extends State<ContactListPage> {
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          ImageAvatar(state.users[index].photo,
+                          ImageAvatar(
+                              sizes: {38.0: 16.0},
+                              path: state.users[index].photo,
                               firstName: state.users[index].firstName),
                           const SizedBox(width: 16),
                           Text(state.users[index].firstName ?? '-',
@@ -88,9 +90,9 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(
           title: Text(
               'Contatos (${state is SuccessContactState ? state.users.length : 0})'),
-          leading: const IconButton(
-              icon: Icon(Icons.menu_rounded, color: Colors.white),
-              onPressed: null,
+          leading: IconButton(
+              icon: const Icon(Icons.menu_rounded, color: Colors.white),
+              onPressed: () {},
               tooltip: 'Menu')),
       floatingActionButton: Container(
         padding: const EdgeInsets.all(6),

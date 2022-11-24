@@ -48,9 +48,9 @@ class UserAdapter {
         lastName: json["name"] as String,
         email: json["email"] as String,
         photo: json["url"],
-        celPhoneNumber: json["phone2"],
-        workPhoneNumber: json["phone3"],
-        homePhoneNumber: json["phone"] as String);
+        celPhoneNumber: json["phone"] as String,
+        workPhoneNumber: json["phone2"],
+        homePhoneNumber: json["phone3"]);
   }
 
   static User createNewUser(final User user, final int newId) {
