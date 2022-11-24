@@ -14,7 +14,7 @@ class AppBackButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-            color: Colors.purple,
+            color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.circular(50),
             boxShadow: [
               BoxShadow(

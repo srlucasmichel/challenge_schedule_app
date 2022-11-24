@@ -3,15 +3,31 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/user.dart';
+import '../states/contact_updates_state.dart';
+import '../stores/contact_detail_store.dart';
 import '../utils/app_formatters.dart';
 import 'components/app_buttons.dart';
+import 'components/app_messengers.dart';
 import 'components/image_avatar.dart';
 import 'components/page_action_button.dart';
 
-class ContactDetailPage extends StatelessWidget {
+class ContactDetailPage extends StatefulWidget {
   final User user;
 
   const ContactDetailPage({required this.user, Key? key}) : super(key: key);
+
+  @override
+  State<ContactDetailPage> createState() => _ContactDetailPageState();
+}
+
+class _ContactDetailPageState extends State<ContactDetailPage> {
+  late User _user;
+
+  @override
+  void initState() {
+    _user = widget.user;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +59,13 @@ class ContactDetailPage extends StatelessWidget {
                   PageActionButton(
                       label: 'Editar',
                       icon: Icons.edit_rounded,
-                      onClick: () =>
-                          Modular.to.pushNamed('/form', arguments: user)),
+                      onClick: () async {
+                        var updatedUser = await Modular.to
+                            .pushNamed('/form', arguments: _user);
+                        if (updatedUser != null) {
+                          setState(() => _user = updatedUser as User);
+                        }
+                      }),
                   PageActionButton(
                       label: 'Compartilhar',
                       icon: Icons.share_rounded,
@@ -75,7 +96,7 @@ class ContactDetailPage extends StatelessWidget {
               const SizedBox(height: 46),
               Center(
                 child: Text(
-                  '${user.firstName} ${user.lastName}',
+                  '${_user.firstName} ${_user.lastName}',
                   style: const TextStyle(
                       fontSize: 17, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
@@ -85,32 +106,32 @@ class ContactDetailPage extends StatelessWidget {
               _getLSection(
                   type: TypeSection.text,
                   label: 'CPF',
-                  value: AppMaskFormatters.cpf.maskText(user.documentNumber),
+                  value: AppMaskFormatters.cpf.maskText(_user.documentNumber),
                   icon: Icons.person_rounded),
               _getLSection(
                   type: TypeSection.text,
                   label: 'E-mail',
-                  value: user.email ?? '',
+                  value: _user.email ?? '',
                   icon: Icons.email_rounded),
               _getLSection(
                   type: TypeSection.number,
                   label: 'Celular',
-                  value: user.celPhoneNumber ?? '',
-                  icon: Icons.phone_rounded),
+                  value: _user.celPhoneNumber ?? '',
+                  icon: Icons.contact_phone_rounded),
               _getLSection(
                   type: TypeSection.number,
                   label: 'Casa',
-                  value: user.homePhoneNumber ?? '',
-                  icon: Icons.phone_rounded),
+                  value: _user.homePhoneNumber ?? '',
+                  icon: Icons.contact_phone_rounded),
               _getLSection(
                   type: TypeSection.number,
                   label: 'Trabalho',
-                  value: user.workPhoneNumber ?? '',
-                  icon: Icons.phone_rounded),
+                  value: _user.workPhoneNumber ?? '',
+                  icon: Icons.contact_phone_rounded),
             ],
           ),
         ),
-        ImageAvatar(user.photo, size: 72, firstName: user.firstName),
+        ImageAvatar(_user.photo, size: 72, firstName: _user.firstName),
       ],
     );
   }
@@ -133,18 +154,43 @@ class ContactDetailPage extends StatelessWidget {
                 color: Colors.black45)),
         const SizedBox(height: 2),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Icon(icon, size: 19.0, color: Colors.black54),
             const SizedBox(width: 6),
-            InkWell(
-              onTap: () =>
-                  type == TypeSection.number ? _makePhoneCall(value) : null,
-              child: Text(
-                  type == TypeSection.number
-                      ? AppMaskFormatters.phone.maskText(value)
-                      : value,
-                  style: const TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w400)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (type == TypeSection.number)
+                  InkWell(
+                    onTap: () => _makePhoneCall(value),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 1.0),
+                      child: Text(AppMaskFormatters.phone.maskText(value),
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w400)),
+                    ),
+                  )
+                else
+                  Text(value,
+                      style: const TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w400)),
+                const SizedBox(width: 8),
+                if (type == TypeSection.number)
+                  InkWell(
+                    onTap: () => _makePhoneCall(value),
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(12, 8, 0, 0),
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                          color: Colors.green.shade600,
+                          borderRadius: BorderRadius.circular(50)),
+                      child: const Icon(Icons.phone_rounded,
+                          color: Colors.white, size: 15.0),
+                    ),
+                  )
+              ],
             ),
           ],
         ),
@@ -157,17 +203,17 @@ class ContactDetailPage extends StatelessWidget {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext ctx) {
         return AlertDialog(
           title: const Text('Excluir este contato?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancelar'),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(ctx).pop(),
             ),
             TextButton(
               child: const Text('Excluir'),
-              onPressed: () => _deleteContact,
+              onPressed: () => _deleteContact(context),
             ),
           ],
         );
@@ -175,8 +221,20 @@ class ContactDetailPage extends StatelessWidget {
     );
   }
 
-  void _deleteContact() {
-    //todo
+  void _deleteContact(BuildContext context) async {
+    final store = context.watch<ContactDetailStore>();
+    await store.delete(_user.id);
+    final state = store.value;
+
+    if (state is SuccessContactDeleteState) {
+      Navigator.of(context).pop();
+      AppMessengers(context, 'Usuário excluído')
+          .showSnackBar(type: SnackBarType.success);
+      Modular.to.pop();
+    } else if (state is ErrorContactDeleteState) {
+      AppMessengers(context, 'Erro ao excluir este usuário')
+          .showSnackBar(type: SnackBarType.error);
+    }
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {

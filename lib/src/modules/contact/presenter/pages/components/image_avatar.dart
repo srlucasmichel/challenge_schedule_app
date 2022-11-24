@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ImageAvatar extends StatelessWidget {
@@ -20,15 +22,14 @@ class ImageAvatar extends StatelessWidget {
         child: Center(
             child: Text(_firstLetterName,
                 style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black54,
-                  fontSize: 16.0
-                ))),
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                    fontSize: 16.0))),
       );
     }
     return CircleAvatar(
       radius: 24.0,
-      backgroundImage: NetworkImage(path!),
+      backgroundImage: FileImage(File(path!)),
       backgroundColor: Colors.grey.shade400,
     );
   }

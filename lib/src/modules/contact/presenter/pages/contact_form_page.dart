@@ -1,14 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../domain/entities/user.dart';
+import '../states/contact_updates_state.dart';
+import '../stores/contact_detail_store.dart';
 import '../utils/app_formatters.dart';
 import '../validator/cpf_validator.dart';
 import 'components/app_buttons.dart';
+import 'components/app_messengers.dart';
 import 'components/image_avatar.dart';
 import 'components/page_action_button.dart';
 
@@ -67,7 +68,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
                   PageActionButton(
                       label: 'Salvar',
                       icon: Icons.save_rounded,
-                      onClick: () {}),
+                      onClick: () => _updateOrInsertContact(context)),
                 ],
               ),
             )
@@ -87,13 +88,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              _imageFile == null
-                  ? ImageAvatar(widget.user?.photo, size: 62)
-                  : CircleAvatar(
-                      radius: 42.0,
-                      backgroundImage: FileImage(File(_imageFile?.path ?? '')),
-                      backgroundColor: Colors.grey.shade400,
-                    ),
+              ImageAvatar(_imageFile?.path, size: 62),
               GestureDetector(
                 onTap: () async {
                   _imageFile =
@@ -214,6 +209,48 @@ class _ContactFormPageState extends State<ContactFormPage> {
     );
   }
 
+  void _updateOrInsertContact(BuildContext context) async {
+    final store = context.watch<ContactDetailStore>();
+
+    if (widget.user?.id != null) {
+      await store.update(_makeUser);
+    } else {
+      await store.insert(_makeUser);
+    }
+
+    final state = store.value;
+
+    if (state is SuccessContactInsertState) {
+      AppMessengers(context, 'Usuário cadastrado')
+          .showSnackBar(type: SnackBarType.success);
+      Modular.to.pop();
+    } else if (state is SuccessContactUpdateState) {
+      AppMessengers(context, 'Usuário alterado')
+          .showSnackBar(type: SnackBarType.success);
+      Modular.to.pop(_makeUser);
+    } else if (state is ErrorContactInsertState) {
+      AppMessengers(context, 'Erro ao cadastrar este usuário')
+          .showSnackBar(type: SnackBarType.error);
+    } else if (state is ErrorContactUpdateState) {
+      AppMessengers(context, 'Erro ao alterar este usuário')
+          .showSnackBar(type: SnackBarType.error);
+    }
+  }
+
+  User get _makeUser {
+    return User(
+      id: widget.user?.id ?? 0,
+      documentNumber: _cpfController.text,
+      firstName: _fNameController.text,
+      lastName: _lNameController.text,
+      email: _emailController.text,
+      photo: _imageFile?.path,
+      celPhoneNumber: _celController.text,
+      workPhoneNumber: _workController.text,
+      homePhoneNumber: _homeController.text,
+    );
+  }
+
   void _populate() {
     if (widget.user?.id != null) {
       _fNameController.text = widget.user?.firstName ?? '';
@@ -227,6 +264,9 @@ class _ContactFormPageState extends State<ContactFormPage> {
           AppMaskFormatters.phone.maskText(widget.user?.workPhoneNumber ?? '');
       _homeController.text =
           AppMaskFormatters.phone.maskText(widget.user?.homePhoneNumber ?? '');
+      if (widget.user?.photo != null) {
+        _imageFile = XFile(widget.user!.photo!);
+      }
     }
   }
 }

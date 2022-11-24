@@ -53,6 +53,19 @@ class UserAdapter {
         homePhoneNumber: json["phone"] as String);
   }
 
+  static User createNewUser(final User user, final int newId) {
+    return User(
+        id: newId,
+        documentNumber: user.documentNumber,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        photo: user.photo,
+        celPhoneNumber: user.celPhoneNumber,
+        workPhoneNumber: user.workPhoneNumber,
+        homePhoneNumber: user.homePhoneNumber);
+  }
+
   static String createTableQuery() {
     return "CREATE TABLE $tableName (" +
         "$columnId INTEGER PRIMARY KEY," +

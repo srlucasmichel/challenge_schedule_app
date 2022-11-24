@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,7 +31,6 @@ class UserRepository extends IUserRepository {
   @override
   Future<Either<IUserException, void>> insertUsers(List<User> users) async {
     try {
-      log("#####|[dao]init ->insertUsers|#####");
       await _getDbInstance();
 
       await _db.transaction((txn) async {
@@ -44,7 +42,6 @@ class UserRepository extends IUserRepository {
 
         await batch.commit(noResult: true);
       });
-      log("#####|[dao]returning ->insertUsers|#####");
       return right(0);
     } on IUserException catch (e) {
       return left(e);
@@ -54,7 +51,6 @@ class UserRepository extends IUserRepository {
   @override
   Future<Either<IUserException, List<User>>> getUsers() async {
     try {
-      log("#####|[dao]init ->getUsers|#####");
       await _getDbInstance();
       List<User> list = [];
 
@@ -70,8 +66,6 @@ class UserRepository extends IUserRepository {
         UserAdapter.columnHomePhoneNumber
       ]);
 
-      log("#####|[dao] getUsers:$maps|#####");
-
       if (maps.isNotEmpty) list = UserAdapter.fromJsonList(maps);
 
       return right(list);
@@ -81,10 +75,11 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Either<IUserException, int>> deleteUser({required int userId}) async {
+  Future<Either<IUserException, void>> deleteUser({required int userId}) async {
     try {
-      return right(await _db.delete(UserAdapter.tableName,
-          where: '${UserAdapter.columnId} = ?', whereArgs: [id]));
+      await _db.delete(UserAdapter.tableName,
+          where: '${UserAdapter.columnId} = ?', whereArgs: [userId]);
+      return right(0);
     } on IUserException catch (e) {
       return left(e);
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-import '../states/contact_state.dart';
-import '../stores/contact_store.dart';
+import '../states/contact_list_state.dart';
+import '../stores/contact_list_store.dart';
 import 'components/image_avatar.dart';
 
 class ContactListPage extends StatefulWidget {
@@ -16,24 +16,26 @@ class _ContactListPageState extends State<ContactListPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ContactStore>().fetchUsers();
+    context.read<ContactListStore>().fetchUsers();
   }
 
   @override
   Widget build(BuildContext context) {
-    final store = context.watch<ContactStore>();
+    final store = context.watch<ContactListStore>();
     final state = store.value;
 
     Widget child = Container();
 
     if (state is LoadingContactState) {
-      child = const Center(
-        child: CircularProgressIndicator(color: Colors.purple),
+      child = Center(
+        child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
       );
     }
 
     if (state is ErrorContactState) {
-      child = Center(child: Text(state.message));
+      child = Center(
+          child:
+              Text(state.message, style: const TextStyle(color: Colors.red)));
     }
 
     if (state is SuccessContactState) {
@@ -51,8 +53,11 @@ class _ContactListPageState extends State<ContactListPage> {
                 child: Column(
                   children: [
                     InkWell(
-                      onTap: () => Modular.to
-                          .pushNamed('/detail', arguments: state.users[index]),
+                      onTap: () async {
+                        await Modular.to.pushNamed('/detail',
+                            arguments: state.users[index]);
+                        context.read<ContactListStore>().fetchUsers();
+                      },
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -90,9 +95,13 @@ class _ContactListPageState extends State<ContactListPage> {
       floatingActionButton: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-            color: Colors.purple, borderRadius: BorderRadius.circular(30)),
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(30)),
         child: IconButton(
-          onPressed: () => Modular.to.pushNamed('/form'),
+          onPressed: () async {
+            await Modular.to.pushNamed('/form');
+            context.read<ContactListStore>().fetchUsers();
+          },
           icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
         ),
       ),

@@ -18,7 +18,8 @@ import 'infra/repositories/user_repository.dart';
 import 'presenter/pages/contact_detail_page.dart';
 import 'presenter/pages/contact_form_page.dart';
 import 'presenter/pages/contact_list_page.dart';
-import 'presenter/stores/contact_store.dart';
+import 'presenter/stores/contact_detail_store.dart';
+import 'presenter/stores/contact_list_store.dart';
 import 'presenter/utils/http_service.dart';
 
 class ContactModule extends Module {
@@ -42,7 +43,8 @@ class ContactModule extends Module {
         Bind.factory((i) => UpdateUser(i())),
         Bind.factory((i) => DeleteUser(i())),
         //store
-        Bind.singleton((i) => ContactStore(i(), i(), i())),
+        Bind.singleton((i) => ContactListStore(i(), i(), i())),
+        Bind.singleton((i) => ContactDetailStore(i(), i(), i())),
       ];
 
   @override
