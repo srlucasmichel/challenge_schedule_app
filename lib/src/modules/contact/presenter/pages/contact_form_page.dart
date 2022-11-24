@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../domain/entities/user.dart';
 import '../utils/app_formatters.dart';
 import '../validator/cpf_validator.dart';
+import 'components/app_buttons.dart';
+import 'components/image_avatar.dart';
+import 'components/page_action_button.dart';
 
 class ContactFormPage extends StatefulWidget {
   final User? user;
@@ -36,26 +40,39 @@ class _ContactFormPageState extends State<ContactFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 9.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.white70)),
-              child: const Text('Salvar',
-                  style: TextStyle(
-                      color: Colors.purple, fontWeight: FontWeight.bold)),
+      backgroundColor: const Color.fromRGBO(221, 221, 232, 1),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppBackButton(onBack: () => Modular.to.pop()),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: _body,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 12)
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: _body,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  PageActionButton(
+                      label: 'Cancelar',
+                      icon: Icons.cancel_rounded,
+                      onClick: () => Modular.to.pop()),
+                  PageActionButton(
+                      label: 'Salvar',
+                      icon: Icons.save_rounded,
+                      onClick: () {}),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -71,11 +88,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
             alignment: Alignment.center,
             children: [
               _imageFile == null
-                  ? CircleAvatar(
-                      radius: 42.0,
-                      backgroundImage: NetworkImage(widget.user?.photo ?? ''),
-                      backgroundColor: Colors.grey.shade400,
-                    )
+                  ? ImageAvatar(widget.user?.photo, size: 62)
                   : CircleAvatar(
                       radius: 42.0,
                       backgroundImage: FileImage(File(_imageFile?.path ?? '')),
@@ -172,7 +185,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
             style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.black45)),
+                color: Colors.black87)),
         const SizedBox(height: 2),
         TextFormField(
           controller: controller,
@@ -180,6 +193,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
           keyboardType: type,
           validator: validator,
           decoration: InputDecoration(
+            fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),

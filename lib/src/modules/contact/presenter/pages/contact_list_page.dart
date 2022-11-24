@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import '../states/contact_state.dart';
 import '../stores/contact_store.dart';
+import 'components/image_avatar.dart';
 
 class ContactListPage extends StatefulWidget {
   const ContactListPage({Key? key}) : super(key: key);
@@ -12,42 +13,10 @@ class ContactListPage extends StatefulWidget {
 }
 
 class _ContactListPageState extends State<ContactListPage> {
-  //List<User> users = List.empty(growable: true);
-
   @override
   void initState() {
     super.initState();
     context.read<ContactStore>().fetchUsers();
-    /*users.add(User(
-        id: 1,
-        documentNumber: '47964001841',
-        firstName: 'Lucas',
-        lastName: 'Michel',
-        email: 'lucasmichel_tcx@hotmail.com',
-        photo: "https://www.w3schools.com/howto/img_avatar.png",
-        celPhoneNumber: '5511976688302',
-        homePhoneNumber: '551130334044',
-        workPhoneNumber: '551131771212'));
-    users.add(User(
-        id: 2,
-        documentNumber: '47964001841',
-        firstName: 'Estela',
-        lastName: 'Souza',
-        email: 'estelasz@hotmail.com',
-        photo: "https://www.w3schools.com/howto/img_avatar.png",
-        celPhoneNumber: '5511976688302',
-        homePhoneNumber: '551130334044',
-        workPhoneNumber: '551131771212'));
-    users.add(User(
-        id: 3,
-        documentNumber: '47964001841',
-        firstName: 'Paulo',
-        lastName: 'Carvalho',
-        email: 'paulo_c@hotmail.com',
-        photo: "https://www.w3schools.com/howto/img_avatar.png",
-        celPhoneNumber: '5511976688302',
-        homePhoneNumber: '551130334044',
-        workPhoneNumber: '551131771212'));*/
   }
 
   @override
@@ -68,58 +37,68 @@ class _ContactListPageState extends State<ContactListPage> {
     }
 
     if (state is SuccessContactState) {
-      child = ListView.builder(
-          itemCount: state.users.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: () => Modular.to
-                        .pushNamed('/detail', arguments: state.users[index]),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 24.0,
-                          backgroundImage:
-                              NetworkImage(state.users[index].photo ?? ''),
-                          backgroundColor: Colors.transparent,
-                        ),
-                        const SizedBox(width: 16),
-                        Text(state.users[index].firstName ?? '-',
-                            style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w600))
-                      ],
+      child = Container(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListView.builder(
+            itemCount: state.users.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () => Modular.to
+                          .pushNamed('/detail', arguments: state.users[index]),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          ImageAvatar(state.users[index].photo,
+                              firstName: state.users[index].firstName),
+                          const SizedBox(width: 16),
+                          Text(state.users[index].firstName ?? '-',
+                              style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87))
+                        ],
+                      ),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 6.0),
-                    child: Divider(),
-                  )
-                ],
-              ),
-            );
-          });
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 4.0),
+                      child: Divider(),
+                    )
+                  ],
+                ),
+              );
+            }),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agenda Eletrônica'),
-      ),
+          title: Text(
+              'Contatos (${state is SuccessContactState ? state.users.length : 0})'),
+          leading: const IconButton(
+              icon: Icon(Icons.menu_rounded, color: Colors.white),
+              onPressed: null,
+              tooltip: 'Menu')),
       floatingActionButton: Container(
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
             color: Colors.purple, borderRadius: BorderRadius.circular(30)),
         child: IconButton(
           onPressed: () => Modular.to.pushNamed('/form'),
-          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          icon: const Icon(Icons.person_add_alt_1_rounded, color: Colors.white),
         ),
       ),
+      backgroundColor: const Color.fromRGBO(221, 221, 232, 1),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
         child: child,
       ),
     );

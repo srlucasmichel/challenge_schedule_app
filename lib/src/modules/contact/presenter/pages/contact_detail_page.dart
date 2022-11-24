@@ -4,78 +4,113 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/user.dart';
 import '../utils/app_formatters.dart';
+import 'components/app_buttons.dart';
+import 'components/image_avatar.dart';
+import 'components/page_action_button.dart';
 
 class ContactDetailPage extends StatelessWidget {
   final User user;
 
-  ContactDetailPage({Key? key, required this.user}) : super(key: key);
+  const ContactDetailPage({required this.user, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(''),
-        actions: [
-          IconButton(
-              onPressed: () => Modular.to.pushNamed('/form', arguments: user),
-              tooltip: 'Editar',
-              icon: const Icon(Icons.edit_rounded)),
-          IconButton(
-              onPressed: () => _deleteContactConfirmation(context),
-              tooltip: 'Excluir',
-              icon: const Icon(Icons.delete_rounded))
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: _body,
+      backgroundColor: const Color.fromRGBO(221, 221, 232, 1),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppBackButton(onBack: () => Modular.to.pop()),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: _body,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  PageActionButton(
+                      label: 'Excluir',
+                      icon: Icons.delete_rounded,
+                      onClick: () => _deleteContactConfirmation(context)),
+                  PageActionButton(
+                      label: 'Editar',
+                      icon: Icons.edit_rounded,
+                      onClick: () =>
+                          Modular.to.pushNamed('/form', arguments: user)),
+                  PageActionButton(
+                      label: 'Compartilhar',
+                      icon: Icons.share_rounded,
+                      onClick: () {}),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Column get _body {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: CircleAvatar(
-            radius: 42.0,
-            backgroundImage: NetworkImage(user.photo ?? ''),
-            backgroundColor: Colors.transparent,
+  Stack get _body {
+    return Stack(
+      alignment: AlignmentDirectional.topCenter,
+      children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(top: 27.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 46),
+              Center(
+                child: Text(
+                  '${user.firstName} ${user.lastName}',
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _getLSection(
+                  type: TypeSection.text,
+                  label: 'CPF',
+                  value: AppMaskFormatters.cpf.maskText(user.documentNumber),
+                  icon: Icons.person_rounded),
+              _getLSection(
+                  type: TypeSection.text,
+                  label: 'E-mail',
+                  value: user.email ?? '',
+                  icon: Icons.email_rounded),
+              _getLSection(
+                  type: TypeSection.number,
+                  label: 'Celular',
+                  value: user.celPhoneNumber ?? '',
+                  icon: Icons.phone_rounded),
+              _getLSection(
+                  type: TypeSection.number,
+                  label: 'Casa',
+                  value: user.homePhoneNumber ?? '',
+                  icon: Icons.phone_rounded),
+              _getLSection(
+                  type: TypeSection.number,
+                  label: 'Trabalho',
+                  value: user.workPhoneNumber ?? '',
+                  icon: Icons.phone_rounded),
+            ],
           ),
         ),
-        const SizedBox(height: 17),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22),
-          child: Center(
-            child: Text(
-              '${user.firstName} ${user.lastName}',
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        _getLSection(
-            type: TypeSection.text,
-            label: 'CPF',
-            value: AppMaskFormatters.cpf.maskText(user.documentNumber)),
-        _getLSection(
-            type: TypeSection.text, label: 'E-mail', value: user.email ?? ''),
-        _getLSection(
-            type: TypeSection.number,
-            label: 'Celular',
-            value: user.celPhoneNumber ?? ''),
-        _getLSection(
-            type: TypeSection.number,
-            label: 'Casa',
-            value: user.homePhoneNumber ?? ''),
-        _getLSection(
-            type: TypeSection.number,
-            label: 'Trabalho',
-            value: user.workPhoneNumber ?? ''),
+        ImageAvatar(user.photo, size: 72, firstName: user.firstName),
       ],
     );
   }
@@ -83,7 +118,8 @@ class ContactDetailPage extends StatelessWidget {
   Widget _getLSection(
       {required final TypeSection type,
       required final String label,
-      required final String value}) {
+      required final String value,
+      required final IconData icon}) {
     if (value.isEmpty) return const SizedBox();
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -96,15 +132,21 @@ class ContactDetailPage extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: Colors.black45)),
         const SizedBox(height: 2),
-        InkWell(
-          onTap: () =>
-              type == TypeSection.number ? _makePhoneCall(value) : null,
-          child: Text(
-              type == TypeSection.number
-                  ? AppMaskFormatters.phone.maskText(value)
-                  : value,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        Row(
+          children: [
+            Icon(icon, size: 19.0, color: Colors.black54),
+            const SizedBox(width: 6),
+            InkWell(
+              onTap: () =>
+                  type == TypeSection.number ? _makePhoneCall(value) : null,
+              child: Text(
+                  type == TypeSection.number
+                      ? AppMaskFormatters.phone.maskText(value)
+                      : value,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w400)),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
       ],
