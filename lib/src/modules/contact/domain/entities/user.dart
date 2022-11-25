@@ -5,23 +5,23 @@ class User {
   final String documentNumber;
   final String? email;
   final String? photo;
-  final String? celPhoneNumber;
+  final String? cellPhoneNumber;
   final String? workPhoneNumber;
   final String? homePhoneNumber;
 
   User(
-      {required this.id,
+      {this.id,
       this.firstName,
       this.lastName,
       required this.documentNumber,
       this.email,
       this.photo,
-      this.celPhoneNumber,
+      this.cellPhoneNumber,
       this.workPhoneNumber,
       this.homePhoneNumber});
 
   @override
   String toString() {
-    return 'User{id: $id, firstName: $firstName, lastName: $lastName, documentNumber: $documentNumber, email: $email, photo: $photo, celPhoneNumber: $celPhoneNumber, workPhoneNumber: $workPhoneNumber, homePhoneNumber: $homePhoneNumber}';
+    return 'User{id: $id, firstName: $firstName, lastName: $lastName, documentNumber: $documentNumber, email: $email, photo: $photo, cellPhoneNumber: $cellPhoneNumber, workPhoneNumber: $workPhoneNumber, homePhoneNumber: $homePhoneNumber}';
   }
 }

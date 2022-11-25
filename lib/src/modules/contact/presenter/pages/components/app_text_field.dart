@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class AppTextField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
+  final FocusNode? focusNode;
   final TextInputType type;
-  final MaskTextInputFormatter? maskFormatter;
   final String? Function(String? v)? validator;
+  final void Function(String v)? onChange;
+  final void Function(String v)? onFieldSubmitted;
 
   const AppTextField(
       {required this.label,
       required this.controller,
+      this.focusNode,
       required this.type,
-      required this.maskFormatter,
-      required this.validator,
+      this.validator,
+      this.onChange,
+      this.onFieldSubmitted,
       Key? key})
       : super(key: key);
 
@@ -32,24 +35,26 @@ class AppTextField extends StatelessWidget {
         const SizedBox(height: 2),
         TextFormField(
           controller: controller,
-          focusNode: null,
+          focusNode: focusNode,
           keyboardType: type,
           validator: validator,
+          textInputAction: onFieldSubmitted == null
+              ? TextInputAction.done
+              : TextInputAction.next,
           decoration: InputDecoration(
             fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: const BorderSide(color: Colors.transparent),
+            ),
             filled: true,
           ),
-          onChanged: (v) {
-            if (maskFormatter != null) {
-              controller.text = maskFormatter!.maskText(v);
-              controller.selection = TextSelection.fromPosition(
-                  TextPosition(offset: controller.text.length));
-            }
-          },
+          onChanged: onChange,
+          onFieldSubmitted: onFieldSubmitted,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 12),

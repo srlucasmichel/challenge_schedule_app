@@ -19,7 +19,7 @@ class UserRepository extends IUserRepository {
   Future<void> _getDbInstance() async => _db = await DbConfig.getInstance();
 
   @override
-  Future<Either<IUserException, int>> insertUser(User user) async {
+  Future<Either<IUserException, int>> insertUser(final User user) async {
     try {
       return right(
           await _db.insert(UserAdapter.tableName, UserAdapter().toJson(user)));
@@ -29,9 +29,11 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Either<IUserException, void>> insertUsers(List<User> users) async {
+  Future<Either<IUserException, int>> insertUsers(
+      final List<User> users) async {
     try {
       await _getDbInstance();
+      int inserted = 0;
 
       await _db.transaction((txn) async {
         var batch = txn.batch();
@@ -40,9 +42,10 @@ class UserRepository extends IUserRepository {
           batch.insert(UserAdapter.tableName, UserAdapter().toJson(user));
         }
 
-        await batch.commit(noResult: true);
+        inserted = (await batch.commit(noResult: true)).length;
       });
-      return right(0);
+
+      return right(inserted);
     } on IUserException catch (e) {
       return left(e);
     }
@@ -62,11 +65,11 @@ class UserRepository extends IUserRepository {
             UserAdapter.columnDocumentNumber,
             UserAdapter.columnEmail,
             UserAdapter.columnPhoto,
-            UserAdapter.columnCelPhoneNumber,
+            UserAdapter.columnCellPhoneNumber,
             UserAdapter.columnWorkPhoneNumber,
             UserAdapter.columnHomePhoneNumber
           ],
-          orderBy: '${UserAdapter.columnFirstName} COLLATE NOCASE' );
+          orderBy: '${UserAdapter.columnFirstName} COLLATE NOCASE');
 
       if (maps.isNotEmpty) list = UserAdapter.fromJsonList(maps);
 
@@ -77,18 +80,18 @@ class UserRepository extends IUserRepository {
   }
 
   @override
-  Future<Either<IUserException, void>> deleteUser({required int userId}) async {
+  Future<Either<IUserException, int>> deleteUser(
+      {required final int userId}) async {
     try {
-      await _db.delete(UserAdapter.tableName,
-          where: '${UserAdapter.columnId} = ?', whereArgs: [userId]);
-      return right(0);
+      return right(await _db.delete(UserAdapter.tableName,
+          where: '${UserAdapter.columnId} = ?', whereArgs: [userId]));
     } on IUserException catch (e) {
       return left(e);
     }
   }
 
   @override
-  Future<Either<IUserException, int>> updateUser(User user) async {
+  Future<Either<IUserException, int>> updateUser(final User user) async {
     try {
       return right(await _db.update(
           UserAdapter.tableName, UserAdapter().toJson(user),

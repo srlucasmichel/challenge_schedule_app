@@ -1,4 +1,3 @@
-import 'package:challenge_schedule_app/src/modules/contact/domain/usecases/delete_user.dart';
 import 'package:challenge_schedule_app/src/modules/contact/domain/usecases/insert_user.dart';
 import 'package:challenge_schedule_app/src/modules/contact/domain/usecases/update_user.dart';
 import 'package:challenge_schedule_app/src/modules/contact/infra/adapters/user_adapter.dart';
@@ -6,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/errors/errors.dart';
-import '../states/contact_updates_state.dart';
+import '../states/contact_form_state.dart';
 
-class ContactDetailStore extends ValueNotifier<ContactUpdatesState> {
+class ContactFormStore extends ValueNotifier<ContactFormState> {
   final IInsertUser insertUser;
   final IUpdateUser updateUser;
-  final IDeleteUser deleteUser;
 
-  ContactDetailStore(this.insertUser, this.updateUser, this.deleteUser)
+  ContactFormStore(this.insertUser, this.updateUser)
       : super(LoadingContactState());
 
-  void emit(ContactUpdatesState newState) => value = newState;
+  void emit(ContactFormState newState) => value = newState;
 
   Future<void> insert(final User user) async {
     emit(LoadingContactState());
@@ -42,21 +40,6 @@ class ContactDetailStore extends ValueNotifier<ContactUpdatesState> {
       return ErrorContactUpdateState(l.message);
     }, (r) {
       return SuccessContactUpdateState(user);
-    });
-
-    emit(newState);
-  }
-
-  Future<void> delete(final int userId) async {
-    emit(LoadingContactState());
-
-    final Either<IUserException, void> deletedUser =
-        await deleteUser.call(userId: userId);
-
-    final newState = deletedUser.fold((l) {
-      return ErrorContactDeleteState(l.message);
-    }, (r) {
-      return SuccessContactDeleteState();
     });
 
     emit(newState);

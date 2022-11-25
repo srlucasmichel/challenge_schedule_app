@@ -6,7 +6,7 @@ class AppMessengers {
 
   AppMessengers(this.context, this.message);
 
-  void showSnackBar({required SnackBarType type}) {
+  void showSnackBar({required final SnackBarType type}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,

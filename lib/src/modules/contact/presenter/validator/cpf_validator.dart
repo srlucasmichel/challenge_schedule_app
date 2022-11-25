@@ -1,7 +1,7 @@
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 
 class CpfValidator {
-  static String? isValid(String? value) {
+  static String? getError(final String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'O CPF deve ser informado';
     }

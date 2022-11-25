@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../domain/entities/user.dart';
-import '../states/contact_updates_state.dart';
-import '../stores/contact_detail_store.dart';
+import '../states/contact_form_state.dart';
+import '../stores/contact_form_store.dart';
 import '../utils/app_formatters.dart';
 import '../validator/cpf_validator.dart';
 import 'components/app_buttons.dart';
 import 'components/app_messengers.dart';
+import 'components/app_text_field.dart';
 import 'components/image_avatar.dart';
 import 'components/page_action_button.dart';
 
@@ -24,20 +24,38 @@ class ContactFormPage extends StatefulWidget {
 
 class _ContactFormPageState extends State<ContactFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _fNameController = TextEditingController();
-  final TextEditingController _lNameController = TextEditingController();
-  final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _documentController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _celController = TextEditingController();
-  final TextEditingController _workController = TextEditingController();
-  final TextEditingController _homeController = TextEditingController();
-  XFile? _imageFile;
-  List<bool> _showInputsPhone = [false, false, false];
+  final TextEditingController _cellPhoneController = TextEditingController();
+  final TextEditingController _workPhoneController = TextEditingController();
+  final TextEditingController _homePhoneController = TextEditingController();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _documentFocusNode = FocusNode();
+  final FocusNode _emailFocusNode = FocusNode();
+  XFile? _profileImageFile;
+  final List<bool> _phoneTextFieldVisibility = [false, false, false];
 
   @override
   void initState() {
-    _populate();
+    _userToFields();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _documentController.dispose();
+    _emailController.dispose();
+    _cellPhoneController.dispose();
+    _workPhoneController.dispose();
+    _homePhoneController.dispose();
+    _lastNameFocusNode.dispose();
+    _documentFocusNode.dispose();
+    _emailFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +71,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: _body,
+                  child: _bodyForm,
                 ),
               ),
             ),
@@ -80,14 +98,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
     );
   }
 
-  void _validateAndSave(BuildContext ctx) {
-    final FormState form = _formKey.currentState!;
-    if (form.validate()) {
-      _updateOrInsertContact(ctx);
-    }
-  }
-
-  Form get _body {
+  Form get _bodyForm {
     return Form(
       key: _formKey,
       child: Column(
@@ -99,10 +110,10 @@ class _ContactFormPageState extends State<ContactFormPage> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                ImageAvatar(sizes: {70.0: 12.0}, path: _imageFile?.path),
+                ImageAvatar(sizes: {70.0: 12.0}, path: _profileImageFile?.path),
                 GestureDetector(
                   onTap: () async {
-                    _imageFile = await ImagePicker()
+                    _profileImageFile = await ImagePicker()
                         .pickImage(source: ImageSource.camera);
                     setState(() {});
                   },
@@ -129,47 +140,58 @@ class _ContactFormPageState extends State<ContactFormPage> {
             ),
           ),
           const SizedBox(height: 17),
-          _getLSection(
+          AppTextField(
               label: 'Nome',
-              controller: _fNameController,
+              controller: _firstNameController,
               type: TextInputType.name,
-              maskFormatter: null,
-              validator: (s) => _fNameController.text.trim().isEmpty
+              validator: (s) => _firstNameController.text.trim().isEmpty
                   ? 'Informe o nome'
-                  : null),
-          _getLSection(
+                  : null,
+              onFieldSubmitted: (s) => _lastNameFocusNode.requestFocus()),
+          AppTextField(
               label: 'Sobrenome',
-              controller: _lNameController,
+              controller: _lastNameController,
+              focusNode: _lastNameFocusNode,
               type: TextInputType.name,
-              maskFormatter: null,
-              validator: null),
-          _getLSection(
+              onFieldSubmitted: (s) => _documentFocusNode.requestFocus()),
+          AppTextField(
               label: 'CPF*',
-              controller: _cpfController,
+              controller: _documentController,
+              focusNode: _documentFocusNode,
               type: TextInputType.number,
-              maskFormatter: AppMaskFormatters.cpf,
-              validator: (s) => CpfValidator.isValid(s)),
-          _getLSection(
+              validator: (s) => CpfValidator.getError(s),
+              onChange: (v) {
+                _documentController.text = AppMaskFormatters.cpf.maskText(v);
+                _documentController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: _documentController.text.length));
+              },
+              onFieldSubmitted: (s) => _emailFocusNode.requestFocus()),
+          AppTextField(
               label: 'E-mail',
               controller: _emailController,
-              type: TextInputType.emailAddress,
-              maskFormatter: null,
-              validator: null),
-          if (_showInputsPhone[0])
+              focusNode: _emailFocusNode,
+              type: TextInputType.emailAddress),
+          if (_phoneTextFieldVisibility[PhoneTextFieldType.cellPhone.index])
             Row(
               children: [
                 Expanded(
-                  child: _getLSection(
+                  child: AppTextField(
                       label: 'Celular',
-                      controller: _celController,
+                      controller: _cellPhoneController,
                       type: TextInputType.number,
-                      maskFormatter: AppMaskFormatters.phone,
-                      validator: null),
+                      onChange: (v) {
+                        _cellPhoneController.text =
+                            AppMaskFormatters.phone.maskText(v);
+                        _cellPhoneController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _cellPhoneController.text.length));
+                      }),
                 ),
                 IconButton(
                     onPressed: () {
-                      _showInputsPhone[0] = false;
-                      _celController.text = '';
+                      _phoneTextFieldVisibility[
+                          PhoneTextFieldType.cellPhone.index] = false;
+                      _cellPhoneController.text = '';
                       setState(() {});
                     },
                     icon: const Icon(Icons.remove_rounded))
@@ -177,21 +199,27 @@ class _ContactFormPageState extends State<ContactFormPage> {
             )
           else
             const SizedBox(),
-          if (_showInputsPhone[2])
+          if (_phoneTextFieldVisibility[PhoneTextFieldType.home.index])
             Row(
               children: [
                 Expanded(
-                  child: _getLSection(
+                  child: AppTextField(
                       label: 'Casa',
-                      controller: _homeController,
+                      controller: _homePhoneController,
                       type: TextInputType.number,
-                      maskFormatter: AppMaskFormatters.phone,
-                      validator: null),
+                      onChange: (v) {
+                        _homePhoneController.text =
+                            AppMaskFormatters.phone.maskText(v);
+                        _homePhoneController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _homePhoneController.text.length));
+                      }),
                 ),
                 IconButton(
                     onPressed: () {
-                      _showInputsPhone[2] = false;
-                      _homeController.text = '';
+                      _phoneTextFieldVisibility[PhoneTextFieldType.home.index] =
+                          false;
+                      _homePhoneController.text = '';
                       setState(() {});
                     },
                     icon: const Icon(Icons.remove_rounded))
@@ -199,21 +227,27 @@ class _ContactFormPageState extends State<ContactFormPage> {
             )
           else
             const SizedBox(),
-          if (_showInputsPhone[1])
+          if (_phoneTextFieldVisibility[PhoneTextFieldType.work.index])
             Row(
               children: [
                 Expanded(
-                  child: _getLSection(
+                  child: AppTextField(
                       label: 'Trabalho',
-                      controller: _workController,
+                      controller: _workPhoneController,
                       type: TextInputType.number,
-                      maskFormatter: AppMaskFormatters.phone,
-                      validator: null),
+                      onChange: (v) {
+                        _workPhoneController.text =
+                            AppMaskFormatters.phone.maskText(v);
+                        _workPhoneController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _workPhoneController.text.length));
+                      }),
                 ),
                 IconButton(
                     onPressed: () {
-                      _showInputsPhone[1] = false;
-                      _workController.text = '';
+                      _phoneTextFieldVisibility[PhoneTextFieldType.work.index] =
+                          false;
+                      _workPhoneController.text = '';
                       setState(() {});
                     },
                     icon: const Icon(Icons.remove_rounded))
@@ -221,51 +255,8 @@ class _ContactFormPageState extends State<ContactFormPage> {
             )
           else
             const SizedBox(),
-          if (_showInputsPhone.contains(false))
-            PopupMenuButton(
-              child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: const Text('Adicionar telefone')),
-              onSelected: (v) {
-                switch (v) {
-                  case 'work':
-                    _showInputsPhone[1] = true;
-                    break;
-                  case 'home':
-                    _showInputsPhone[2] = true;
-                    break;
-                  default:
-                    _showInputsPhone[0] = true;
-                }
-                setState(() {});
-              },
-              itemBuilder: (context) {
-                List<PopupMenuItem> popupMenuItems = List.empty(growable: true);
-                if (!_showInputsPhone[0]) {
-                  popupMenuItems.add(const PopupMenuItem(
-                    value: 'cel',
-                    child: Text("Celular"),
-                  ));
-                }
-                if (!_showInputsPhone[1]) {
-                  popupMenuItems.add(const PopupMenuItem(
-                    value: 'work',
-                    child: Text("Trabalho"),
-                  ));
-                }
-                if (!_showInputsPhone[2]) {
-                  popupMenuItems.add(const PopupMenuItem(
-                    value: 'home',
-                    child: Text("Casa"),
-                  ));
-                }
-                return popupMenuItems;
-              },
-            )
+          if (_phoneTextFieldVisibility.contains(false))
+            _getPhonePopupMenuButton
           else
             const SizedBox(),
         ],
@@ -273,61 +264,67 @@ class _ContactFormPageState extends State<ContactFormPage> {
     );
   }
 
-  Column _getLSection(
-      {required String label,
-      required TextEditingController controller,
-      required TextInputType type,
-      required MaskTextInputFormatter? maskFormatter,
-      required String? Function(String? v)? validator}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87)),
-        const SizedBox(height: 2),
-        TextFormField(
-          controller: controller,
-          focusNode: null,
-          keyboardType: type,
-          validator: validator,
-          decoration: InputDecoration(
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.0),
-              borderSide: const BorderSide(color: Colors.transparent),
-            ),
-            filled: true,
-          ),
-          onChanged: (v) {
-            if (maskFormatter != null) {
-              controller.text = maskFormatter.maskText(v);
-              controller.selection = TextSelection.fromPosition(
-                  TextPosition(offset: controller.text.length));
-            }
-          },
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 12),
-      ],
+  Widget get _getPhonePopupMenuButton {
+    return PopupMenuButton(
+      child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(5)),
+          child: const Text('Adicionar telefone')),
+      onSelected: (v) {
+        switch (v) {
+          case PhoneTextFieldType.work:
+            _phoneTextFieldVisibility[PhoneTextFieldType.work.index] = true;
+            break;
+          case PhoneTextFieldType.home:
+            _phoneTextFieldVisibility[PhoneTextFieldType.home.index] = true;
+            break;
+          default:
+            _phoneTextFieldVisibility[PhoneTextFieldType.cellPhone.index] =
+                true;
+        }
+        setState(() {});
+      },
+      itemBuilder: (context) {
+        List<PopupMenuItem> popupMenuItems = List.empty(growable: true);
+        if (!_phoneTextFieldVisibility[PhoneTextFieldType.cellPhone.index]) {
+          popupMenuItems.add(const PopupMenuItem(
+            value: PhoneTextFieldType.cellPhone,
+            child: Text("Celular"),
+          ));
+        }
+        if (!_phoneTextFieldVisibility[PhoneTextFieldType.work.index]) {
+          popupMenuItems.add(const PopupMenuItem(
+            value: PhoneTextFieldType.work,
+            child: Text("Trabalho"),
+          ));
+        }
+        if (!_phoneTextFieldVisibility[PhoneTextFieldType.home.index]) {
+          popupMenuItems.add(const PopupMenuItem(
+            value: PhoneTextFieldType.home,
+            child: Text("Casa"),
+          ));
+        }
+        return popupMenuItems;
+      },
     );
   }
 
-  void _updateOrInsertContact(BuildContext context) async {
-    final store = context.watch<ContactDetailStore>();
+  void _validateAndSave(final BuildContext ctx) {
+    final FormState form = _formKey.currentState!;
+    if (form.validate()) {
+      _saveData(ctx);
+    }
+  }
+
+  void _saveData(final BuildContext context) async {
+    final store = context.watch<ContactFormStore>();
 
     if (widget.user?.id != null) {
-      await store.update(_buildUser);
+      await store.update(_getUser);
     } else {
-      await store.insert(_buildUser);
+      await store.insert(_getUser);
     }
 
     final state = store.value;
@@ -339,7 +336,7 @@ class _ContactFormPageState extends State<ContactFormPage> {
     } else if (state is SuccessContactUpdateState) {
       AppMessengers(context, 'Usuário alterado')
           .showSnackBar(type: SnackBarType.success);
-      Modular.to.pop(_buildUser);
+      Modular.to.pop(_getUser);
     } else if (state is ErrorContactInsertState) {
       AppMessengers(context, 'Erro ao cadastrar este usuário')
           .showSnackBar(type: SnackBarType.error);
@@ -349,48 +346,56 @@ class _ContactFormPageState extends State<ContactFormPage> {
     }
   }
 
-  User get _buildUser {
-    return User(
-      id: widget.user?.id,
-      documentNumber: _cpfController.text,
-      firstName: _fNameController.text,
-      lastName: _lNameController.text,
-      email: _emailController.text,
-      photo: _imageFile?.path,
-      celPhoneNumber: _celController.text,
-      workPhoneNumber: _workController.text,
-      homePhoneNumber: _homeController.text,
-    );
-  }
-
-  void _populate() {
+  void _userToFields() {
     if (widget.user?.id != null) {
-      _fNameController.text = widget.user?.firstName ?? '';
-      _lNameController.text = widget.user?.lastName ?? '';
-      _cpfController.text =
+      _firstNameController.text = widget.user?.firstName ?? '';
+      _lastNameController.text = widget.user?.lastName ?? '';
+      _documentController.text =
           AppMaskFormatters.cpf.maskText(widget.user?.documentNumber ?? '');
       _emailController.text = widget.user?.email ?? '';
-      _celController.text =
-          AppMaskFormatters.phone.maskText(widget.user?.celPhoneNumber ?? '');
-      _workController.text =
+      _cellPhoneController.text =
+          AppMaskFormatters.phone.maskText(widget.user?.cellPhoneNumber ?? '');
+      _workPhoneController.text =
           AppMaskFormatters.phone.maskText(widget.user?.workPhoneNumber ?? '');
-      _homeController.text =
+      _homePhoneController.text =
           AppMaskFormatters.phone.maskText(widget.user?.homePhoneNumber ?? '');
       if (widget.user?.photo != null) {
-        _imageFile = XFile(widget.user!.photo!);
-      }
-      if (_celController.text.trim().isNotEmpty) {
-        _showInputsPhone[0] = true;
-      }
-      if (_workController.text.trim().isNotEmpty) {
-        _showInputsPhone[1] = true;
-      }
-      if (_homeController.text.trim().isNotEmpty) {
-        _showInputsPhone[2] = true;
-      }
-      if (!_showInputsPhone.contains(true)) {
-        _showInputsPhone[0] = true;
+        _profileImageFile = XFile(widget.user!.photo!);
       }
     }
+    _setInitialVisibility();
+  }
+
+  void _setInitialVisibility() {
+    if (widget.user?.id != null) {
+      if (_cellPhoneController.text.trim().isNotEmpty) {
+        _phoneTextFieldVisibility[PhoneTextFieldType.cellPhone.index] = true;
+      }
+      if (_workPhoneController.text.trim().isNotEmpty) {
+        _phoneTextFieldVisibility[PhoneTextFieldType.work.index] = true;
+      }
+      if (_homePhoneController.text.trim().isNotEmpty) {
+        _phoneTextFieldVisibility[PhoneTextFieldType.home.index] = true;
+      }
+    }
+    if (!_phoneTextFieldVisibility.contains(true)) {
+      _phoneTextFieldVisibility[PhoneTextFieldType.cellPhone.index] = true;
+    }
+  }
+
+  User get _getUser {
+    return User(
+      id: widget.user?.id,
+      documentNumber: _documentController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      email: _emailController.text,
+      photo: _profileImageFile?.path,
+      cellPhoneNumber: _cellPhoneController.text,
+      workPhoneNumber: _workPhoneController.text,
+      homePhoneNumber: _homePhoneController.text,
+    );
   }
 }
+
+enum PhoneTextFieldType { cellPhone, work, home }

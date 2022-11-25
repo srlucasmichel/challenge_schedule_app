@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/user.dart';
-import '../states/contact_updates_state.dart';
-import '../stores/contact_detail_store.dart';
+import '../states/contact_delete_state.dart';
+import '../stores/contact_delete_store.dart';
 import '../utils/app_formatters.dart';
 import 'components/app_buttons.dart';
 import 'components/app_messengers.dart';
 import 'components/image_avatar.dart';
 import 'components/page_action_button.dart';
+import 'components/row_detail.dart';
 
 class ContactDetailPage extends StatefulWidget {
   final User user;
@@ -42,7 +42,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: _body,
+                  child: _detailBody,
                 ),
               ),
             ),
@@ -55,7 +55,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
                   PageActionButton(
                       label: 'Excluir',
                       icon: Icons.delete_rounded,
-                      onClick: () => _deleteContactConfirmation(context)),
+                      onClick: () => _confirmDeleteDialog(context)),
                   PageActionButton(
                       label: 'Editar',
                       icon: Icons.edit_rounded,
@@ -79,7 +79,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
     );
   }
 
-  Stack get _body {
+  Stack get _detailBody {
     return Stack(
       alignment: AlignmentDirectional.topCenter,
       children: <Widget>[
@@ -103,27 +103,27 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              _getLSection(
+              RowDetail(
                   type: TypeSection.text,
                   label: 'CPF',
                   value: AppMaskFormatters.cpf.maskText(_user.documentNumber),
                   icon: Icons.person_rounded),
-              _getLSection(
+              RowDetail(
                   type: TypeSection.text,
                   label: 'E-mail',
                   value: _user.email ?? '',
                   icon: Icons.email_rounded),
-              _getLSection(
+              RowDetail(
                   type: TypeSection.number,
                   label: 'Celular',
-                  value: _user.celPhoneNumber ?? '',
+                  value: _user.cellPhoneNumber ?? '',
                   icon: Icons.phone_rounded),
-              _getLSection(
+              RowDetail(
                   type: TypeSection.number,
                   label: 'Casa',
                   value: _user.homePhoneNumber ?? '',
                   icon: Icons.phone_rounded),
-              _getLSection(
+              RowDetail(
                   type: TypeSection.number,
                   label: 'Trabalho',
                   value: _user.workPhoneNumber ?? '',
@@ -137,57 +137,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
     );
   }
 
-  Widget _getLSection(
-      {required final TypeSection type,
-      required final String label,
-      required final String value,
-      required final IconData icon}) {
-    if (value.isEmpty) return const SizedBox();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black45)),
-        const SizedBox(height: 2),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Icon(icon, size: 19.0, color: Colors.black54),
-            const SizedBox(width: 6),
-            if (type == TypeSection.number)
-              Tooltip(
-                message: 'Clique para realizar uma chamada',
-                child: InkWell(
-                  onTap: () => _makePhoneCall(value),
-                  child: Container(
-                    padding: const EdgeInsets.only(bottom: 1.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(AppMaskFormatters.phone.maskText(value),
-                        style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w400)),
-                  ),
-                ),
-              )
-            else
-              Text(value,
-                  style: const TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w400)),
-          ],
-        ),
-        const SizedBox(height: 12),
-      ],
-    );
-  }
-
-  Future<void> _deleteContactConfirmation(final BuildContext context) async {
+  Future<void> _confirmDeleteDialog(final BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -201,7 +151,7 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
             ),
             TextButton(
               child: const Text('Excluir'),
-              onPressed: () => _deleteContact(context),
+              onPressed: () => _deleteData(context),
             ),
           ],
         );
@@ -209,8 +159,8 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
     );
   }
 
-  void _deleteContact(BuildContext context) async {
-    final store = context.watch<ContactDetailStore>();
+  void _deleteData(final BuildContext context) async {
+    final store = context.watch<ContactDeleteStore>();
     await store.delete(_user.id ?? 0);
     final state = store.value;
 
@@ -224,11 +174,4 @@ class _ContactDetailPageState extends State<ContactDetailPage> {
           .showSnackBar(type: SnackBarType.error);
     }
   }
-
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(scheme: 'tel', path: '+$phoneNumber');
-    await launchUrl(launchUri);
-  }
 }
-
-enum TypeSection { text, number }

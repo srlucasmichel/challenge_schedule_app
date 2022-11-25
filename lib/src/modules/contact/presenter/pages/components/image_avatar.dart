@@ -27,10 +27,14 @@ class ImageAvatar extends StatelessWidget {
                     fontSize: sizes.values.first))),
       );
     }
-    return CircleAvatar(
-      radius: 24.0,
-      backgroundImage: FileImage(File(path!)),
-      backgroundColor: Colors.grey.shade400,
+    return SizedBox(
+      width: sizes.keys.first,
+      height: sizes.keys.first,
+      child: CircleAvatar(
+        radius: 24.0,
+        backgroundImage: FileImage(File(path!)),
+        backgroundColor: Colors.grey.shade400,
+      ),
     );
   }
 
