@@ -17,4 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 # Autor
 
-| [<img src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115"><br><sub>Lucas Michel</sub>](https://github.com/srlucasmichel)
+| [<img src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115"><br><sub>Lucas Michel</sub>](https://github.com/srlucasmichel) |
