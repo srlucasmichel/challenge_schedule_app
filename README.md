@@ -31,11 +31,11 @@ Requisitos:
 </p>
 
 ## :blue_book: Técnicas e tecnologias utilizadas
-- ``Clean architecture``
-- ``Injeção de dependência e gestão de rotas com Modular``
-- ``Retorno de exceções com either (fpdart)``
-- ``Componentização de widgets``
-- ``Testes unitários com mocktail``
+- ``Clean:``Conceitos de arquitetura limpa e código limpo
+- ``Modular:``Injeção de dependência e gerenciamento de rotas
+- ``Either:``Retorno de erros
+- ``Componentização:``Padronização de widgets
+- ``Mocktail:``Testes unitários
 
 ## :cd: Inicialização
 
@@ -57,30 +57,30 @@ $ flutter run
 <p align="left">🚧 Em aprimoramento...  🚧</p>
 
 ## :rocket: Implementações futuras
-<h4 align="left">Testes</h4>
+- <h3>Testes</h3>
 
-- [x] Usecase
-- [ ] Repository
-- [ ] Integration
+- [x] *Usecase*
+- [ ] *Repository*
+- [ ] *Integration*
 
-<h4 align="left">Próximas Features</h4>
+- <h3>Próximas Features</h3>
 
-- [ ] Select image from gallery
-- [ ] Add contact to favorites
-- [ ] Search contact
-- [ ] Share contact
-- [ ] Add contact to groups
-- [ ] New user informations (nickname, address, notes, website)
-- [ ] Link to WhatsApp chat (when available for the number)
-- [ ] Custom ordenation
-- [ ] Link to WhatsApp chat (when available for the number)
-- [ ] Dark mode
+- [ ] *Select image from gallery*
+- [ ] *Add contact to favorites*
+- [ ] *Search contact*
+- [ ] *Share contact*
+- [ ] *Add contact to groups*
+- [ ] *New user informations (address, birthday, notes, website)*
+- [ ] *Link to WhatsApp chat (when available for the number)*
+- [ ] *Custom ordenation*
+- [ ] *Link to WhatsApp chat (when available for the number)*
+- [ ] *Dark mode*
 
 ## :paperclip: Autor
 
 <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115px;"/>
-Feito com :heart: por Lucas Michel :wave: Entre em contato!
+Feito com :heart: por <a href="https://www.github.com/srlucasmichel/" target="_blank">Lucas Michel</a> :wave: Entre em contato!
 <br /><br />
-<a href="https://www.linkedin.com/in/srlucasmichel/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-<a href="https://www.behance.net/srlucasmichel/"><img src="https://img.shields.io/badge/-Behance-blue?style=for-the-badge&logo=behance&logoColor=white"></a>
-<a href="mailto:lucasmichel_tcx@hotmail.com"><img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white"></a>
+<a href="https://www.linkedin.com/in/srlucasmichel/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
+<a href="https://www.behance.net/srlucasmichel/" target="_blank"><img src="https://img.shields.io/badge/-Behance-blue?style=for-the-badge&logo=behance&logoColor=white"></a>
+<a href="mailto:lucasmichel_tcx@hotmail.com" target="_blank"><img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white"></a>
