@@ -6,7 +6,7 @@
   <img src="http://img.shields.io/static/v1?label=Status&message=Em%20desenvolvimento&color=GREEN&style=flat&logo=Codeforces&logoColor=white"/>
 <p>
 
-Um aplicativo para gerenciar contatos.
+Um aplicativo para gerenciar contatos
 
 ## :dart: Objetivo
 Faça um aplicativo em Flutter de agenda eletrônica. Deverá fazer as ações básicas: criar, exibir, editar e deletar.
@@ -78,4 +78,9 @@ $ flutter run
 
 ## :paperclip: Autor
 
-[<img src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115"><br><sub>Lucas Michel</sub>](https://github.com/srlucasmichel)
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115px;"/>
+Feito com :heart: por Lucas Michel :wave: Entre em contato!
+<br /><br />
+<a href="https://www.linkedin.com/in/srlucasmichel/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
+<a href="https://www.behance.net/srlucasmichel/"><img src="https://img.shields.io/badge/-Behance-blue?style=for-the-badge&logo=behance&logoColor=white"></a>
+<a href="mailto:lucasmichel_tcx@hotmail.com"><img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white"></a>
