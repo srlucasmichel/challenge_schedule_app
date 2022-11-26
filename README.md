@@ -11,17 +11,23 @@ Um aplicativo para gerenciar contatos
 ## :dart: Objetivo
 Faça um aplicativo em Flutter de agenda eletrônica. Deverá fazer as ações básicas: criar, exibir, editar e deletar.
 
-Dados do contato a serem salvos na agenda:
+<details>
+  <summary>Dados do contato a serem salvos na agenda</summary>
+  
 - Nome, sobrenome, CPF (obrigatório), email;
 - Foto (utilizar a camera do celular);
 - Telefones (múltiplos telefones são permitidos) e seus respectivos tipos (trabalho, celular, residencial);
+</details>
 
-Requisitos:
+<details>
+  <summary>Requisitos</summary>
+  
 - utilizar banco de dados local;
 - os campos de CPF e telefone devem possuir máscaras;
 - o campo de CPF deve ser validado;
 - ao tocar no número do telefone, no modo de exibição do contato, uma ligação telefonica deve ser iniciada;
 - o endpoint https://jsonplaceholder.typicode.com/users contém 10 usuários. Na primeira inicialização do app, esses usuários deverão ser inseridos no banco. Como o CPF é obrigatório, utilize o endpoint: curl -X POST "https://www.4devs.com.br/ferramentas_online.php" -H "Content-Type: application/x-www-form-urlencoded" -d "acao=gerar_cpf"
+</details>
 
 ## :iphone: Telas desenvolvidas
 <p width="100%">
@@ -57,14 +63,18 @@ $ flutter run
 <p align="left">🚧 Em aprimoramento...  🚧</p>
 
 ## :rocket: Implementações futuras
-- <h3>Testes</h3>
 
+<details>
+<summary>Testes</summary>
+  
 - [x] *Usecase*
 - [ ] *Repository*
 - [ ] *Integration*
+</details>
 
-- <h3>Próximas Features</h3>
-
+<details>
+  <summary>Próximas Features</summary>
+  
 - [ ] *Select image from gallery*
 - [ ] *Add contact to favorites*
 - [ ] *Search contact*
@@ -75,6 +85,7 @@ $ flutter run
 - [ ] *Custom ordenation*
 - [ ] *Link to WhatsApp chat (when available for the number)*
 - [ ] *Dark mode*
+</details>
 
 ## :paperclip: Autor
 
