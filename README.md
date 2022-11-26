@@ -1,4 +1,4 @@
-# App de Contatos
+# Contatos
 
 <img src="https://img.shields.io/static/v1?label=Flutter&message=3.0.5&color=45d1fd&style=flat&logo=flutter"/>
 
@@ -47,6 +47,9 @@ curl -X POST "https://www.4devs.com.br/ferramentas_online.php" -H "Content-Type:
 - [ ] Add contact to groups
 - [ ] New user informations (nickname, address, notes, website)
 - [ ] Link to WhatsApp chat (when available for the number)
+- [ ] Custom ordenation
+- [ ] Link to WhatsApp chat (when available for the number)
+- [ ] Dark mode
 
 ## Autor
 
