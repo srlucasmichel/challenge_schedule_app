@@ -92,6 +92,12 @@ $ flutter run
 <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/80552835?v=4" width="115px;"/>
 Feito com :heart: por <a href="https://www.github.com/srlucasmichel/" target="_blank">Lucas Michel</a> :wave: Entre em contato!
 <br /><br />
-<a href="https://www.linkedin.com/in/srlucasmichel/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a>
-<a href="https://www.behance.net/srlucasmichel/" target="_blank"><img src="https://img.shields.io/badge/-Behance-blue?style=for-the-badge&logo=behance&logoColor=white"></a>
-<a href="mailto:lucasmichel_tcx@hotmail.com" target="_blank"><img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white"></a>
+<a href="https://www.linkedin.com/in/srlucasmichel/" target="_blank">
+  <img src="https://img.shields.io/badge/srlucasmichel-0077B5?flat&logo=linkedin&logoColor=white" height="25px"/>
+</a>
+<a href="https://www.behance.net/srlucasmichel/" target="_blank">
+  <img src="https://img.shields.io/badge/-srlucasmichel-blue?style=flat&logo=behance&logoColor=white" height="25px" />
+</a>
+<a href="mailto:lucasmichel_tcx@hotmail.com" target="_blank">
+  <img src="https://img.shields.io/badge/lucasmichel_tcx@hotmail.com-0078D4?style=flat&logo=microsoft-outlook&logoColor=white" height="25px" />
+</a>
