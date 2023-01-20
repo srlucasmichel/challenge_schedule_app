@@ -39,9 +39,9 @@ Faça um aplicativo em Flutter de agenda eletrônica. Deverá fazer as ações b
 ## :blue_book: Técnicas e tecnologias utilizadas
 - ``Clean:``Conceitos de arquitetura limpa e código limpo
 - ``Modular:``Injeção de dependência e gerenciamento de rotas
-- ``Either:``Retorno de erros
+- ``Either:``Retorno de dois tipos de dados, uma para erro e outra para sucesso
 - ``Componentização:``Padronização de widgets
-- ``Mocktail:``Testes unitários
+- ``Mocktail:``Testes unitários nos repositories
 
 ## :cd: Inicialização
 
